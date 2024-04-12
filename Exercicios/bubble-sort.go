@@ -65,13 +65,7 @@ func merge(left, right []int) []int {
     resultado := make([]int, size)
 
     for k := 0; k < size; k++ {
-        if i > len(left)-1 && j <= len(right)-1 {
-            resultado[k] = right[j]
-            j++
-        } else if j > len(right)-1 && i <= len(left)-1 {
-            resultado[k] = left[i]
-            i++
-        } else if left[i] < right[j] {
+        if i <= len(left)-1 && (j > len(right)-1 || left[i] < right[j]) {
             resultado[k] = left[i]
             i++
         } else {

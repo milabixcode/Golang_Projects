@@ -1,0 +1,17 @@
+## Go entra em todos os pacotes desse projeto e executar os testes: 
+    go test ./...
+
+## Modo verboso, descritivo, descreve:
+    go test -v
+
+## Cobertura dos testes
+    go test --cover
+
+## Gera um arquivo txt de relatório das linhas cobertas e não
+    go test --coverprofile nomeAroquivo.txt
+
+## Ler arquivo txt de Relatório
+    go tool cover --func=cobertura.txt
+
+## Mostra arquivo HTML mostrando todas as linhas não cobertas
+    go tool cover --html=cobertura.txt

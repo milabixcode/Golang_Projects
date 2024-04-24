@@ -26,6 +26,11 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
+	if erro = usuario.Preparar(); erro != nil {
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
 	// Erro caso não consiga abrir conexão com o banco
 	// tem a ver com servidor,\ não com reoquisição
 	db, erro := banco.Conectar() 

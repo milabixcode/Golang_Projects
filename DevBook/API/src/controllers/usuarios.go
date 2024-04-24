@@ -4,31 +4,49 @@ import (
 	"api/src/banco"
 	"api/src/modelos"
 	"api/src/repositorios"
+	"api/src/respostas"
 	"encoding/json"
-	"io/ioutil"
-	"log"
+	"io"
 	"net/http"
 )
 
 //CriarUsuario insere um usuario no banco de dados
 func CriarUsuario(w http.ResponseWriter, r *http.Request){
-	corpoRequest, erro := ioutil.ReadAll(r.Body)
+	corpoRequest, erro := io.ReadAll(r.Body)
+	// Erro caso não consiga ler o corpo da requisição
 	if erro != nil {
-		log.Fatal(erro)
+		respostas.Erro(w, http.StatusUnprocessableEntity, erro)
+		return
 	}
 
 	var usuario modelos.Usuario
+	// Erro caso não consiga jogar na struct de usuário
 	if erro = json.Unmarshal(corpoRequest, &usuario); erro != nil {
-		log.Fatal(erro)
+		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
 	}
 
+	// Erro caso não consiga abrir conexão com o banco
+	// tem a ver com servidor,\ não com reoquisição
 	db, erro := banco.Conectar() 
 	if erro != nil {
-		log.Fatal(erro)
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
 	}
+	// Quando a função do controller terminar oque a conexao com o banco seja fechada
+	defer db.Close()
 
 	repositorio := repositorios.NovoRepositorioDeUsuarios(db)
-	repositorio.Criar(usuario)
+	usuario.ID, erro = repositorio.Criar(usuario)
+	// Erro ao não conseguir criar
+	if erro != nil {
+		respostas.Erro(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	// Devolve o usuário que foi inserido
+	respostas.JSON(w, http.StatusCreated, usuario)
+	
 }
 
 //BuscarUsuarios busca todos os usuarios salvos no banco

@@ -8,9 +8,9 @@ import (
 
 //Rota representa todas as rotas da AO
 type Rota struct {
-	URI                 string
-	Metodo              string
-	Funcao              func(http.ResponseWriter, *http.Request)
+	URI                string
+	Metodo             string
+	Funcao             func(http.ResponseWriter, *http.Request)
 	RequerAutenticacao bool
 }
 
